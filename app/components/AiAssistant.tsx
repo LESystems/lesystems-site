@@ -1,0 +1,43 @@
+"use client";
+
+import { FormEvent, useState } from "react";
+import Link from "next/link";
+
+type Message = { role: "assistant" | "user"; text: string };
+
+const suggestions = ["Qual serviço combina comigo?", "Como funciona um projeto?", "Quero solicitar orçamento"];
+
+function localAnswer(question: string) {
+  const value = question.toLowerCase();
+  if (value.includes("orçamento") || value.includes("preço")) return "O valor depende do objetivo e do escopo. Posso encaminhar você ao formulário para receber uma avaliação inicial sem compromisso.";
+  if (value.includes("autom")) return "Automação é indicada quando sua equipe repete tarefas, transfere dados manualmente ou precisa integrar ferramentas. A LESystems começa mapeando o processo atual.";
+  if (value.includes("site")) return "Para apresentar serviços, captar contatos ou lançar uma oferta, Sites & Experiências Web costuma ser o melhor ponto de partida.";
+  if (value.includes("sistema")) return "Um sistema personalizado é ideal quando planilhas e ferramentas separadas já não acompanham a operação da empresa.";
+  if (value.includes("como funciona") || value.includes("projeto")) return "O projeto passa por descoberta, estratégia, desenvolvimento e evolução. Você acompanha cada etapa e valida as decisões importantes.";
+  return "Posso orientar sobre sites, sistemas, automações, prazos e próximos passos. Se a dúvida for específica, a equipe pode continuar o atendimento pelo formulário.";
+}
+
+export default function AiAssistant() {
+  const [open, setOpen] = useState(false);
+  const [input, setInput] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [messages, setMessages] = useState<Message[]>([{ role: "assistant", text: "Olá! Sou o assistente da LESystems. Conte o que sua empresa precisa e eu ajudo a encontrar o melhor caminho." }]);
+
+  async function ask(text: string) {
+    const clean = text.trim(); if (!clean || loading) return;
+    setMessages((items) => [...items, { role: "user", text: clean }]); setInput(""); setLoading(true);
+    try {
+      const response = await fetch("/api/assistant", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ message: clean }) });
+      const data = await response.json();
+      setMessages((items) => [...items, { role: "assistant", text: data.answer || localAnswer(clean) }]);
+    } catch { setMessages((items) => [...items, { role: "assistant", text: localAnswer(clean) }]); }
+    finally { setLoading(false); }
+  }
+
+  function submit(event: FormEvent) { event.preventDefault(); void ask(input); }
+
+  return <div className={`assistant ${open ? "is-open" : ""}`}>
+    {open && <section className="assistant-panel" aria-label="Assistente LESystems"><header><span className="assistant-avatar">LE</span><div><strong>Assistente LESystems</strong><small><i /> disponível agora</small></div><button onClick={() => setOpen(false)} aria-label="Fechar assistente">×</button></header><div className="assistant-messages">{messages.map((message, index) => <p className={message.role} key={`${message.role}-${index}`}>{message.text}</p>)}{loading && <p className="assistant typing">Analisando sua dúvida…</p>}</div><div className="assistant-suggestions">{suggestions.map((item) => <button key={item} onClick={() => void ask(item)}>{item}</button>)}</div><form onSubmit={submit}><input value={input} onChange={(event) => setInput(event.target.value)} placeholder="Digite sua dúvida…" aria-label="Sua dúvida" /><button aria-label="Enviar pergunta">↑</button></form><Link href="/contato">Prefere falar com uma pessoa? Enviar contato →</Link></section>}
+    <button className="assistant-toggle" onClick={() => setOpen(!open)} aria-expanded={open}><span>✦</span><b>{open ? "Fechar" : "Posso ajudar?"}</b></button>
+  </div>;
+}
