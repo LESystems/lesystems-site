@@ -8,8 +8,8 @@ export default function SiteHeader() {
     <div className="container nav-row">
       <span className="nav-accent" aria-hidden="true" />
       <Link href="/" className="brand" aria-label="LESystems — início"><span className="brand-frame"><Image src="/logo-lesystems.png" alt="LESystems" width={300} height={110} priority /></span><span className="brand-copy"><strong>Engenharia de Software</strong><small>Soluções que impulsionam negócios</small></span></Link>
-      <nav className="desktop-nav" aria-label="Navegação principal"><Link href="/">Início</Link><Link href="/servicos">Serviços</Link><Link href="/suporte">Suporte</Link><Link href="/contato">Contato</Link><Link className="button button-small" href="/contato">Iniciar um projeto <span>↗</span></Link></nav>
-      <details className="mobile-menu"><summary aria-label="Abrir menu"><span /><span /><span /></summary><nav><Link href="/">Início</Link><Link href="/servicos">Serviços</Link><Link href="/suporte">Suporte</Link><Link href="/contato">Contato</Link></nav></details>
+      <nav className="desktop-nav" aria-label="Navegação principal"><Link href="/">Início</Link><Link href="/empresa">Empresa</Link><Link href="/servicos">Serviços</Link><Link href="/conteudos">Conteúdos</Link><Link href="/suporte">Suporte</Link><Link className="button button-small" href="/contato">Fale conosco <span>↗</span></Link></nav>
+      <details className="mobile-menu"><summary aria-label="Abrir menu"><span /><span /><span /></summary><nav><Link href="/">Início</Link><Link href="/empresa">Empresa</Link><Link href="/servicos">Serviços</Link><Link href="/conteudos">Conteúdos</Link><Link href="/suporte">Suporte</Link><Link href="/contato">Contato</Link></nav></details>
     </div>
   </header>;
 }
