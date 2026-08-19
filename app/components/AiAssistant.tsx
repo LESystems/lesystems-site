@@ -1,10 +1,11 @@
 "use client";
 
-import { FormEvent, useState } from "react";
+import { FormEvent, useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import ArrowIcon from "./ArrowIcon";
 
-type Message = { role: "assistant" | "user"; text: string };
+type Source = { url: string; title: string };
+type Message = { role: "assistant" | "user"; text: string; sources?: Source[] };
 
 const suggestions = ["Qual serviço combina comigo?", "Como funciona um projeto?", "Quero solicitar orçamento"];
 
@@ -23,14 +24,23 @@ export default function AiAssistant() {
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
   const [messages, setMessages] = useState<Message[]>([{ role: "assistant", text: "Olá! Sou o assistente da LESystems. Conte o que sua empresa precisa e eu ajudo a encontrar o melhor caminho." }]);
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (open) messagesEndRef.current?.scrollIntoView({ behavior: "smooth", block: "nearest" });
+  }, [messages, loading, open]);
 
   async function ask(text: string) {
     const clean = text.trim(); if (!clean || loading) return;
     setMessages((items) => [...items, { role: "user", text: clean }]); setInput(""); setLoading(true);
     try {
-      const response = await fetch("/api/assistant", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ message: clean }) });
+      const controller = new AbortController();
+      const timeout = window.setTimeout(() => controller.abort(), 25000);
+      const response = await fetch("/api/assistant", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ message: clean }), signal: controller.signal });
+      window.clearTimeout(timeout);
+      if (!response.ok) throw new Error("Falha ao consultar o assistente");
       const data = await response.json();
-      setMessages((items) => [...items, { role: "assistant", text: data.answer || localAnswer(clean) }]);
+      setMessages((items) => [...items, { role: "assistant", text: data.answer || localAnswer(clean), sources: data.sources || [] }]);
     } catch { setMessages((items) => [...items, { role: "assistant", text: localAnswer(clean) }]); }
     finally { setLoading(false); }
   }
@@ -38,7 +48,7 @@ export default function AiAssistant() {
   function submit(event: FormEvent) { event.preventDefault(); void ask(input); }
 
   return <div className={`assistant ${open ? "is-open" : ""}`}>
-    {open && <section className="assistant-panel" aria-label="Assistente LESystems"><header><span className="assistant-avatar">LE</span><div><strong>Assistente LESystems</strong><small><i /> disponível agora</small></div><button onClick={() => setOpen(false)} aria-label="Fechar assistente">×</button></header><div className="assistant-messages">{messages.map((message, index) => <p className={message.role} key={`${message.role}-${index}`}>{message.text}</p>)}{loading && <p className="assistant typing">Analisando sua dúvida…</p>}</div><div className="assistant-suggestions">{suggestions.map((item) => <button key={item} onClick={() => void ask(item)}>{item}</button>)}</div><form onSubmit={submit}><input value={input} onChange={(event) => setInput(event.target.value)} placeholder="Digite sua dúvida…" aria-label="Sua dúvida" /><button aria-label="Enviar pergunta"><ArrowIcon direction="up" /></button></form><Link href="/contato">Prefere falar com uma pessoa? Enviar contato <ArrowIcon /></Link></section>}
+    {open && <section className="assistant-panel" aria-label="Assistente LESystems"><header><span className="assistant-avatar">LE</span><div><strong>Assistente LESystems</strong><small><i /> disponível agora</small></div><button onClick={() => setOpen(false)} aria-label="Fechar assistente">×</button></header><div className="assistant-messages" aria-live="polite" aria-busy={loading}>{messages.map((message, index) => <div className={`message-bubble message-${message.role}`} key={`${message.role}-${index}`}><p>{message.text}</p>{message.sources && message.sources.length > 0 && <span className="assistant-sources"><b>Fontes</b>{message.sources.map((source) => <a href={source.url} target="_blank" rel="noreferrer" key={source.url}>{source.title}</a>)}</span>}</div>)}{loading && <div className="message-bubble message-assistant typing"><p>Pesquisando e analisando sua dúvida…</p></div>}<div ref={messagesEndRef} className="assistant-messages-end" /></div><div className="assistant-suggestions">{suggestions.map((item) => <button key={item} onClick={() => void ask(item)} disabled={loading}>{item}</button>)}</div><form onSubmit={submit}><input value={input} onChange={(event) => setInput(event.target.value)} placeholder="Digite sua dúvida…" aria-label="Sua dúvida" disabled={loading} /><button aria-label="Enviar pergunta" disabled={loading}><ArrowIcon direction="up" /></button></form><Link href="/contato">Prefere falar com uma pessoa? Enviar contato <ArrowIcon /></Link></section>}
     <button className="assistant-toggle" onClick={() => setOpen(!open)} aria-expanded={open}><span>✦</span><b>{open ? "Fechar" : "Posso ajudar?"}</b></button>
   </div>;
 }
