@@ -1,0 +1,8 @@
+import Link from "next/link";
+import SiteHeader from "../components/SiteHeader";
+import SiteFooter from "../components/SiteFooter";
+import ArrowIcon from "../components/ArrowIcon";
+import { cases } from "../business-data";
+
+export const metadata = { title:"Portfólio e soluções", description:"Exemplos de soluções digitais planejadas pela LESystems." };
+export default function PortfolioPage() { return <main className="site-shell"><SiteHeader /><section className="inner-hero"><div className="mesh-bg" /><div className="container inner-centered"><p className="eyebrow"><span /> Portfólio de soluções</p><h1>Desafios reais.<br /><em>Caminhos bem construídos.</em></h1><p>Conheça formatos de projeto que mostram como estratégia, tecnologia e acompanhamento se conectam.</p></div></section><section className="section"><div className="container case-list">{cases.map(item=><article key={item.number}><div className="case-index"><span>{item.number}</span><small>{item.category}</small></div><div><h2>{item.title}</h2><dl><div><dt>Desafio</dt><dd>{item.challenge}</dd></div><div><dt>Solução</dt><dd>{item.solution}</dd></div><div><dt>Resultado esperado</dt><dd>{item.result}</dd></div></dl><div className="tag-row">{item.tags.map(tag=><span key={tag}>{tag}</span>)}</div></div></article>)}</div></section><section className="section page-cta"><div className="container contact-card light-card"><div><p className="eyebrow"><span /> Seu próximo projeto</p><h2>Vamos transformar seu cenário em um <em>novo caso de evolução?</em></h2><Link className="button" href="/orcamento">Planejar uma solução <ArrowIcon diagonal /></Link></div></div></section><SiteFooter /></main> }

@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import AiAssistant from "./components/AiAssistant";
 import ScrollAtmosphere from "./components/ScrollAtmosphere";
+import SiteAnalytics from "./components/SiteAnalytics";
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://lesystems-site.vercel.app"),
@@ -11,5 +12,5 @@ export const metadata: Metadata = {
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
-  return <html lang="pt-BR"><body><ScrollAtmosphere />{children}<AiAssistant /></body></html>;
+  return <html lang="pt-BR"><body><SiteAnalytics /><ScrollAtmosphere />{children}<AiAssistant /></body></html>;
 }

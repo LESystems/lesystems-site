@@ -1,0 +1,1 @@
+export async function POST(request:Request){try{const metric=await request.json() as Record<string,unknown>;console.info("[lesystems-metric]",JSON.stringify(metric));return new Response(null,{status:204})}catch{return Response.json({error:"Métrica inválida."},{status:400})}}

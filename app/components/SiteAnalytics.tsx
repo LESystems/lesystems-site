@@ -1,0 +1,4 @@
+"use client";
+import { useEffect } from "react";import { useReportWebVitals } from "next/web-vitals";
+const report=(payload:Record<string,unknown>)=>{if(process.env.NODE_ENV!=="production")return;const body=JSON.stringify(payload);if(navigator.sendBeacon)navigator.sendBeacon("/api/metrics",body);else void fetch("/api/metrics",{method:"POST",headers:{"Content-Type":"application/json"},body,keepalive:true})};
+export default function SiteAnalytics(){useReportWebVitals(metric=>report({type:"vital",name:metric.name,value:metric.value,rating:metric.rating,path:location.pathname}));useEffect(()=>{const click=(event:MouseEvent)=>{const link=(event.target as Element)?.closest("a.button, a.text-link, .action-grid a");if(link)report({type:"action",label:link.textContent?.trim().slice(0,80),target:link.getAttribute("href"),path:location.pathname})};document.addEventListener("click",click);return()=>document.removeEventListener("click",click)},[]);return null}
