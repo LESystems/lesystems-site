@@ -1,167 +1,99 @@
+import Image from "next/image";
+
+const whatsapp = "https://wa.me/5521976160256";
+
+const services = [
+  { icon: "01", title: "Sites & experiências web", text: "Sites institucionais, landing pages e aplicações rápidas, responsivas e preparadas para converter.", tags: ["Next.js", "UX/UI", "Performance"] },
+  { icon: "02", title: "Sistemas personalizados", text: "Soluções sob medida para organizar dados, simplificar operações e acompanhar o crescimento do negócio.", tags: ["Sob medida", "Escalável", "Seguro"] },
+  { icon: "03", title: "Automação de processos", text: "Integrações e fluxos inteligentes que reduzem tarefas repetitivas, erros e tempo operacional.", tags: ["Integrações", "Eficiência", "Agilidade"] },
+];
+
+const steps = [
+  ["01", "Descoberta", "Entendemos o cenário, os objetivos e as prioridades do seu negócio."],
+  ["02", "Estratégia", "Desenhamos a solução, o escopo e um caminho claro para a entrega."],
+  ["03", "Desenvolvimento", "Construímos com acompanhamento próximo, qualidade e transparência."],
+  ["04", "Evolução", "Publicamos, acompanhamos resultados e preparamos os próximos passos."],
+];
+
 export default function Home() {
   return (
-    <main className="min-h-screen bg-slate-950 text-white">
-      <header className="flex items-center justify-between border-b border-white/10 px-8 py-5">
-        <div>
-          <h1 className="text-2xl font-bold">LESystems</h1>
-          <p className="text-sm text-cyan-400">Engenharia de Software</p>
+    <main className="site-shell">
+      <header className="site-header">
+        <div className="utility-bar">
+          <div className="container utility-inner">
+            <p><span className="status-dot" /> Projetos digitais sob medida para empresas</p>
+            <div><a href="mailto:contato.lesystems@gmail.com">contato.lesystems@gmail.com</a><span>•</span><a href={whatsapp} target="_blank" rel="noreferrer">(21) 97616-0256</a></div>
+          </div>
         </div>
-
-        <nav className="flex gap-6 text-sm">
-          <a href="#inicio" className="hover:text-cyan-400">
-            Início
+        <div className="container nav-row">
+          <a href="#inicio" className="brand" aria-label="LESystems — início">
+            <span className="brand-frame"><Image src="/logo-lesystems.png" alt="LESystems" width={300} height={110} priority /></span>
+            <span className="brand-copy"><strong>Engenharia de Software</strong><small>Soluções que impulsionam negócios</small></span>
           </a>
-          <a href="#servicos" className="hover:text-cyan-400">
-            Serviços
-          </a>
-          <a href="#sobre" className="hover:text-cyan-400">
-            Sobre
-          </a>
-          <a href="#contato" className="hover:text-cyan-400">
-            Contato
-          </a>
-        </nav>
+          <nav className="desktop-nav" aria-label="Navegação principal">
+            <a href="#inicio">Início</a><a href="#servicos">Serviços</a><a href="#processo">Como trabalhamos</a><a href="#sobre">Sobre</a>
+            <a className="button button-small" href="#contato">Iniciar um projeto <span>↗</span></a>
+          </nav>
+          <details className="mobile-menu">
+            <summary aria-label="Abrir menu"><span /><span /><span /></summary>
+            <nav><a href="#inicio">Início</a><a href="#servicos">Serviços</a><a href="#processo">Como trabalhamos</a><a href="#sobre">Sobre</a><a href="#contato">Contato</a></nav>
+          </details>
+        </div>
       </header>
 
-      <section
-        id="inicio"
-        className="flex min-h-[75vh] items-center justify-center px-8 text-center"
-      >
-        <div className="max-w-4xl">
-          <p className="mb-4 text-cyan-400">
-            TECNOLOGIA • SOFTWARE • INOVAÇÃO
-          </p>
+      <section id="inicio" className="hero">
+        <div className="hero-orb orb-one" /><div className="hero-orb orb-two" />
+        <div className="container hero-grid">
+          <div className="hero-copy reveal">
+            <p className="eyebrow"><span /> Tecnologia, estratégia e desenvolvimento</p>
+            <h1>Transformamos desafios em <em>soluções digitais.</em></h1>
+            <p className="hero-lead">Criamos sites, sistemas e automações sob medida para tornar sua empresa mais eficiente, conectada e preparada para crescer.</p>
+            <div className="hero-actions"><a href={whatsapp} target="_blank" rel="noreferrer" className="button">Falar sobre meu projeto <span>↗</span></a><a href="#servicos" className="text-link">Explorar soluções <span>↓</span></a></div>
+            <div className="trust-row"><div><strong>Estratégia</strong><span>antes do código</span></div><div><strong>Sob medida</strong><span>para sua operação</span></div><div><strong>Evolução</strong><span>para crescer junto</span></div></div>
+          </div>
 
-          <h2 className="text-5xl font-bold leading-tight md:text-7xl">
-            Transformamos ideias em
-            <span className="text-cyan-400"> soluções digitais</span>
-          </h2>
-
-          <p className="mx-auto mt-6 max-w-2xl text-lg text-slate-300">
-            Desenvolvimento de sistemas, sites, aplicações e soluções
-            personalizadas para empresas que querem evoluir através da
-            tecnologia.
-          </p>
-
-          <div className="mt-8 flex justify-center gap-4">
-            <a
-              href="#servicos"
-              className="rounded-lg bg-cyan-500 px-6 py-3 font-semibold text-slate-950 hover:bg-cyan-400"
-            >
-              Conheça nossos serviços
-            </a>
-
-            <a
-              href="https://wa.me/5521976160256"
-              target="_blank"
-              className="rounded-lg border border-white/20 px-6 py-3 font-semibold hover:bg-white/10"
-            >
-              Falar no WhatsApp
-            </a>
+          <div className="solution-stage reveal delay-one" aria-label="Visão das soluções LESystems">
+            <div className="float-pill pill-top"><span>✓</span> Projeto acompanhado de perto</div>
+            <div className="solution-card">
+              <div className="card-top"><div><span className="mini-label">LESystems / Soluções</span><h2>Da ideia à solução.</h2></div><span className="live-dot">● online</span></div>
+              <div className="dashboard">
+                <div className="dash-main"><span className="dash-label">Eficiência digital</span><strong>+ clareza</strong><div className="chart-bars"><i /><i /><i /><i /><i /><i /></div><p>Processos mais simples. Decisões mais rápidas.</p></div>
+                <div className="dash-stack"><div><span className="feature-icon">⌘</span><p><strong>Sistemas</strong><small>Operação organizada</small></p></div><div><span className="feature-icon">↗</span><p><strong>Web</strong><small>Presença que converte</small></p></div><div><span className="feature-icon">⚡</span><p><strong>Automação</strong><small>Mais produtividade</small></p></div></div>
+              </div>
+              <div className="card-footer"><span><i /> Soluções construídas para evoluir</span><span>2026</span></div>
+            </div>
+            <div className="float-pill pill-bottom"><strong>3 frentes</strong><span>uma visão integrada</span></div>
           </div>
         </div>
+        <div className="container client-strip"><span>Construímos tecnologia para</span><p>NEGÓCIOS LOCAIS</p><i /> <p>EMPRESAS EM CRESCIMENTO</p><i /> <p>PROFISSIONAIS</p></div>
       </section>
 
-      <section id="servicos" className="bg-slate-900 px-8 py-20">
-        <div className="mx-auto max-w-6xl">
-          <h2 className="mb-12 text-center text-4xl font-bold">
-            Nossos Serviços
-          </h2>
-
-          <div className="grid gap-6 md:grid-cols-3">
-            <div className="rounded-xl border border-white/10 bg-slate-950 p-7">
-              <h3 className="mb-3 text-xl font-semibold text-cyan-400">
-                Desenvolvimento Web
-              </h3>
-              <p className="text-slate-300">
-                Sites modernos, rápidos, responsivos e preparados para apresentar
-                sua empresa de forma profissional.
-              </p>
-            </div>
-
-            <div className="rounded-xl border border-white/10 bg-slate-950 p-7">
-              <h3 className="mb-3 text-xl font-semibold text-cyan-400">
-                Sistemas Personalizados
-              </h3>
-              <p className="text-slate-300">
-                Sistemas desenvolvidos de acordo com as necessidades e processos
-                específicos de cada empresa.
-              </p>
-            </div>
-
-            <div className="rounded-xl border border-white/10 bg-slate-950 p-7">
-              <h3 className="mb-3 text-xl font-semibold text-cyan-400">
-                Automação de Processos
-              </h3>
-              <p className="text-slate-300">
-                Soluções para reduzir tarefas repetitivas e aumentar a eficiência
-                das operações.
-              </p>
-            </div>
-          </div>
+      <section id="servicos" className="section services-section">
+        <div className="container">
+          <div className="section-heading"><div><p className="eyebrow"><span /> O que fazemos</p><h2>Tecnologia que resolve.<br /><em>Experiências que conectam.</em></h2></div><p>Unimos visão de negócio e engenharia de software para entregar soluções úteis, bonitas e fáceis de usar.</p></div>
+          <div className="services-grid">{services.map((service) => <article className="service-card" key={service.title}><div className="service-number">{service.icon}</div><h3>{service.title}</h3><p>{service.text}</p><div className="tag-row">{service.tags.map((tag) => <span key={tag}>{tag}</span>)}</div><a href="#contato" aria-label={`Saber mais sobre ${service.title}`}>Descobrir solução <span>→</span></a></article>)}</div>
         </div>
       </section>
 
-      <section id="sobre" className="px-8 py-20">
-        <div className="mx-auto max-w-4xl text-center">
-          <h2 className="mb-6 text-4xl font-bold">Sobre a LESystems</h2>
-
-          <p className="text-lg leading-8 text-slate-300">
-            A LESystems nasce com o objetivo de desenvolver soluções tecnológicas
-            eficientes, modernas e personalizadas. Nosso foco é utilizar a
-            Engenharia de Software para transformar necessidades reais em
-            sistemas que gerem resultados.
-          </p>
+      <section id="processo" className="section process-section">
+        <div className="container process-grid">
+          <div className="process-intro"><p className="eyebrow light"><span /> Nosso processo</p><h2>Simples de entender.<br /><em>Sólido para entregar.</em></h2><p>Você acompanha cada etapa e sabe exatamente onde o projeto está. Comunicação clara, decisões conscientes e foco no que gera valor.</p><a href={whatsapp} target="_blank" rel="noreferrer" className="button button-light">Conversar com a LESystems <span>↗</span></a></div>
+          <div className="steps">{steps.map(([number,title,text]) => <article key={number}><span>{number}</span><div><h3>{title}</h3><p>{text}</p></div></article>)}</div>
         </div>
       </section>
 
-      <section id="contato" className="bg-slate-900 px-8 py-20">
-        <div className="mx-auto max-w-4xl text-center">
-          <h2 className="mb-6 text-4xl font-bold">Entre em contato</h2>
-
-          <p className="mb-8 text-slate-300">
-            Tem uma ideia ou precisa desenvolver um sistema? Fale com a LESystems.
-          </p>
-
-          <div className="space-y-3 text-lg">
-            <p>
-              WhatsApp:{" "}
-              <a
-                className="text-cyan-400"
-                href="https://wa.me/5521976160256"
-                target="_blank"
-              >
-                (21) 97616-0256
-              </a>
-            </p>
-
-            <p>
-              E-mail:{" "}
-              <a
-                className="text-cyan-400"
-                href="mailto:contato.lesystems@gmail.com"
-              >
-                contato.lesystems@gmail.com
-              </a>
-            </p>
-
-            <p>
-              Instagram:{" "}
-              <a
-                className="text-cyan-400"
-                href="https://instagram.com/lesystems"
-                target="_blank"
-              >
-                @lesystems
-              </a>
-            </p>
-          </div>
+      <section id="sobre" className="section about-section">
+        <div className="container about-grid">
+          <div className="about-visual"><div className="code-window"><div className="window-head"><span /><span /><span /><small>lesystems / projeto</small></div><pre><code><b>const</b> solução = {'{'}{"\n  "}<span>estratégia</span>: true,{"\n  "}<span>tecnologia</span>: &quot;moderna&quot;,{"\n  "}<span>objetivo</span>: &quot;resultado&quot;{"\n"}{'}'};</code></pre><div className="window-result"><span>✓</span><p><strong>Pronto para evoluir</strong><small>Solução validada com o negócio</small></p></div></div></div>
+          <div className="about-copy"><p className="eyebrow"><span /> Sobre a LESystems</p><h2>Engenharia de software com <em>propósito.</em></h2><p>A LESystems nasceu para aproximar empresas da tecnologia de forma simples, estratégica e humana. Transformamos necessidades reais em produtos digitais eficientes e preparados para o futuro.</p><div className="values"><div><span>01</span><p><strong>Clareza em cada etapa</strong><small>Sem complicação ou linguagem desnecessária.</small></p></div><div><span>02</span><p><strong>Qualidade com intenção</strong><small>Cada escolha serve ao objetivo do projeto.</small></p></div><div><span>03</span><p><strong>Parceria de verdade</strong><small>Proximidade para construir a solução certa.</small></p></div></div></div>
         </div>
       </section>
 
-      <footer className="border-t border-white/10 px-8 py-6 text-center text-sm text-slate-500">
-        © 2026 LESystems. Todos os direitos reservados.
-      </footer>
+      <section id="contato" className="section contact-section">
+        <div className="container contact-card"><div><p className="eyebrow light"><span /> Vamos tirar sua ideia do papel?</p><h2>Seu próximo projeto pode começar <em>agora.</em></h2><p>Conte brevemente o que sua empresa precisa. Vamos conversar sem compromisso e pensar no melhor caminho.</p><a href={whatsapp} target="_blank" rel="noreferrer" className="button button-light">Chamar no WhatsApp <span>↗</span></a></div><aside><p>Outros canais</p><a href="mailto:contato.lesystems@gmail.com"><span>E-mail</span><strong>contato.lesystems@gmail.com</strong></a><a href="https://instagram.com/lesystems" target="_blank" rel="noreferrer"><span>Instagram</span><strong>@lesystems</strong></a><a href={whatsapp} target="_blank" rel="noreferrer"><span>WhatsApp</span><strong>(21) 97616-0256</strong></a></aside></div>
+      </section>
+
+      <footer><div className="container footer-grid"><a href="#inicio" className="footer-brand"><Image src="/logo-lesystems.png" alt="LESystems" width={220} height={80} /></a><p>Engenharia de Software para transformar ideias em soluções digitais.</p><div><a href="#servicos">Serviços</a><a href="#sobre">Sobre</a><a href="#contato">Contato</a></div></div><div className="container footer-bottom"><span>© 2026 LESystems. Todos os direitos reservados.</span><a href="#inicio">Voltar ao topo ↑</a></div></footer>
     </main>
   );
 }
