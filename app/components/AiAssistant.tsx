@@ -2,6 +2,7 @@
 
 import { FormEvent, useState } from "react";
 import Link from "next/link";
+import ArrowIcon from "./ArrowIcon";
 
 type Message = { role: "assistant" | "user"; text: string };
 
@@ -37,7 +38,7 @@ export default function AiAssistant() {
   function submit(event: FormEvent) { event.preventDefault(); void ask(input); }
 
   return <div className={`assistant ${open ? "is-open" : ""}`}>
-    {open && <section className="assistant-panel" aria-label="Assistente LESystems"><header><span className="assistant-avatar">LE</span><div><strong>Assistente LESystems</strong><small><i /> disponível agora</small></div><button onClick={() => setOpen(false)} aria-label="Fechar assistente">×</button></header><div className="assistant-messages">{messages.map((message, index) => <p className={message.role} key={`${message.role}-${index}`}>{message.text}</p>)}{loading && <p className="assistant typing">Analisando sua dúvida…</p>}</div><div className="assistant-suggestions">{suggestions.map((item) => <button key={item} onClick={() => void ask(item)}>{item}</button>)}</div><form onSubmit={submit}><input value={input} onChange={(event) => setInput(event.target.value)} placeholder="Digite sua dúvida…" aria-label="Sua dúvida" /><button aria-label="Enviar pergunta">↑</button></form><Link href="/contato">Prefere falar com uma pessoa? Enviar contato →</Link></section>}
+    {open && <section className="assistant-panel" aria-label="Assistente LESystems"><header><span className="assistant-avatar">LE</span><div><strong>Assistente LESystems</strong><small><i /> disponível agora</small></div><button onClick={() => setOpen(false)} aria-label="Fechar assistente">×</button></header><div className="assistant-messages">{messages.map((message, index) => <p className={message.role} key={`${message.role}-${index}`}>{message.text}</p>)}{loading && <p className="assistant typing">Analisando sua dúvida…</p>}</div><div className="assistant-suggestions">{suggestions.map((item) => <button key={item} onClick={() => void ask(item)}>{item}</button>)}</div><form onSubmit={submit}><input value={input} onChange={(event) => setInput(event.target.value)} placeholder="Digite sua dúvida…" aria-label="Sua dúvida" /><button aria-label="Enviar pergunta"><ArrowIcon direction="up" /></button></form><Link href="/contato">Prefere falar com uma pessoa? Enviar contato <ArrowIcon /></Link></section>}
     <button className="assistant-toggle" onClick={() => setOpen(!open)} aria-expanded={open}><span>✦</span><b>{open ? "Fechar" : "Posso ajudar?"}</b></button>
   </div>;
 }
