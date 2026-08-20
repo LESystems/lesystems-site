@@ -27,7 +27,7 @@ export default function Home() {
   return <main className="editorial-site">
     <header className="header">
       <a className="brand-symbol" href="/" aria-label="LESystems — início"><Image src="/logo-lesystems.png" alt="" width={1280} height={1280} priority /></a>
-      <nav className="main-nav" aria-label="Navegação principal"><a href="/servicos">Soluções</a><a href="/portfolio">Portfólio</a><a href="/noticias">Notícias</a><a href="/empresa">Empresa</a></nav>
+      <nav className="main-nav" aria-label="Navegação principal"><a href="/servicos">Soluções</a><a href="/portfolio">Portfólio</a><a href="/conteudos">Conteúdos</a><a href="/empresa">Empresa</a></nav>
       <a className="header-cta" href={whatsapp} target="_blank" rel="noreferrer">Iniciar conversa <Arrow /></a>
     </header>
 
