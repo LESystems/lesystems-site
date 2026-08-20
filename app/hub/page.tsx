@@ -5,6 +5,7 @@ import HubApp from "./HubApp";
 import HubLogin from "./HubLogin";
 import "./hub.css";
 import "./login.css";
+import "./refine.css";
 
 export const metadata: Metadata = {
   title: "LESystems Hub",
@@ -27,5 +28,5 @@ export default async function HubPage() {
   const teamAllowed = validToken("admin", jar.get("lesystems_admin")?.value);
   const clientAllowed = validToken("client", jar.get("lesystems_client")?.value);
   if (!teamAllowed && !clientAllowed) return <HubLogin />;
-  return <HubApp initialRole={teamAllowed ? "team" : "client"} />;
+  return <HubApp initialRole={teamAllowed ? "team" : "client"} canSwitchRole={teamAllowed} />;
 }

@@ -29,7 +29,7 @@ const stages = [
   ["04", "Publicação", "próximo"],
 ];
 
-export default function HubApp({ initialRole }: { initialRole: Role }) {
+export default function HubApp({ initialRole, canSwitchRole }: { initialRole: Role; canSwitchRole: boolean }) {
   const [role, setRole] = useState<Role>(initialRole);
   const [view, setView] = useState<View>("inicio");
   const [menuOpen, setMenuOpen] = useState(false);
@@ -44,7 +44,7 @@ export default function HubApp({ initialRole }: { initialRole: Role }) {
   return <main className={`hub-app hub-${role}`}>
     <aside className={`hub-sidebar ${menuOpen ? "is-open" : ""}`}>
       <div className="hub-brand"><span className="hub-logo-crop"><Image src="/logo-lesystems.png" alt="" width={1280} height={1280} priority /></span><div><strong>LESystems</strong><small>Hub</small></div></div>
-      <div className="role-switch" aria-label="Visualizar como"><button className={role === "client" ? "active" : ""} onClick={() => changeRole("client")}>Cliente</button><button className={role === "team" ? "active" : ""} onClick={() => changeRole("team")}>Equipe</button></div>
+      {canSwitchRole && <div className="role-switch" aria-label="Visualizar como"><button className={role === "client" ? "active" : ""} onClick={() => changeRole("client")}>Cliente</button><button className={role === "team" ? "active" : ""} onClick={() => changeRole("team")}>Equipe</button></div>}
       <nav className="hub-nav" aria-label="Navegação do aplicativo">{nav.map(item => <button key={item.id} className={view === item.id ? "active" : ""} onClick={() => { setView(item.id); setMenuOpen(false); }}><span>{item.icon}</span>{item.label}</button>)}</nav>
       <div className="sidebar-help"><span>Precisa de ajuda?</span><p>Fale com o suporte LESystems.</p><button onClick={() => setView("suporte")}>Abrir chamado ↗</button></div>
       <div className="hub-user"><span>MS</span><div><strong>{role === "client" ? "Marina Souza" : "Lucas Esteves"}</strong><small>{role === "client" ? "Cliente · Aurora Clínica" : "Equipe · Administrador"}</small></div><button aria-label="Mais opções">•••</button></div>
