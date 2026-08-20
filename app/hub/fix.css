@@ -1,0 +1,8 @@
+.hub-app,.hub-login{position:relative;z-index:2;isolation:isolate}
+.hub-app section,.hub-login section{opacity:1!important;transform:none!important;transition:none!important}
+.hub-app .hub-panel,.hub-app .quick-card,.hub-app .metric,.hub-app .attention-card{background:#fff!important;opacity:1!important;backdrop-filter:none!important}
+.hub-logo-crop{display:grid!important;place-items:center}
+.hub-logo-crop img{position:static!important;width:34px!important;height:34px!important;object-fit:contain}
+.login-brand>span{display:grid!important;place-items:center}
+.login-brand img{position:static!important;width:38px!important;height:38px!important;object-fit:contain}
+.hub-main,.hub-content,.hub-grid,.quick-grid{position:relative;z-index:1}

@@ -6,6 +6,7 @@ import HubLogin from "./HubLogin";
 import "./hub.css";
 import "./login.css";
 import "./refine.css";
+import "./fix.css";
 
 export const metadata: Metadata = {
   title: "LESystems Hub",
