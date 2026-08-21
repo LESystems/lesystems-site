@@ -15,7 +15,12 @@ export async function POST(request: Request) {
   const project = payment?.projects as unknown as { name:string; customer_id:string } | null;
   if (!payment || payment.status !== "pending" || !profile?.customer_id || project?.customer_id !== profile.customer_id) return Response.json({ error:"Este pagamento não está disponível para sua conta." }, { status:403 });
   if (!project) return Response.json({ error:"Projeto não encontrado." }, { status:404 });
-  if (!isInterConfigured()) return Response.json({ error:"O Pix está aguardando a ativação da conta Inter Empresas da LESystems." }, { status:503 });
+  if (!isInterConfigured()) {
+    const pixKey = process.env.INTER_PIX_KEY;
+    if (!pixKey) return Response.json({ error:"O Pix está aguardando a ativação da conta Inter Empresas da LESystems." }, { status:503 });
+    await admin.from("payments").update({ provider:"inter_manual" }).eq("id", payment.id);
+    return Response.json({ pixCode:pixKey, manual:true, amountCents:payment.amount_cents || 0 });
+  }
   try {
     const txid = payment.provider_reference || payment.id.replaceAll("-", "").slice(0, 32);
     const charge = await createInterPixCharge({ txid, amountCents:payment.amount_cents || 0, description:`LESystems - ${project.name}` });
