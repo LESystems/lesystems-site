@@ -24,6 +24,20 @@ export async function POST(request: Request) {
     if (projectError) throw projectError;
     const { error: briefError } = await supabase.from("project_briefs").insert({ project_id: project.id, company: { name: input.companyName, segment: input.segment, description: input.companyDescription, audience: input.audience }, project: { type: input.projectType, objective: input.objective, features: input.features }, identity: { colors: input.colors, style: input.style, references: input.references }, contact: { name: input.contactName, email: input.email.toLowerCase(), phone: input.phone }, additional_notes: input.additionalNotes });
     if (briefError) throw briefError;
+    const email = input.email.toLowerCase();
+    const { data: users } = await supabase.auth.admin.listUsers({ page: 1, perPage: 1000 });
+    const existingUser = users.users.find(user => user.email?.toLowerCase() === email);
+    if (existingUser) {
+      const { data: existingProfile } = await supabase.from("profiles").select("customer_id").eq("id", existingUser.id).maybeSingle();
+      if (existingProfile?.customer_id) {
+        await supabase.from("projects").update({ customer_id: existingProfile.customer_id }).eq("id", project.id);
+        await supabase.from("customers").delete().eq("id", customer.id);
+      } else {
+        await supabase.from("profiles").update({ customer_id: customer.id, full_name: input.contactName }).eq("id", existingUser.id);
+      }
+    } else {
+      await supabase.auth.admin.inviteUserByEmail(email, { data: { full_name: input.contactName, role: "client", customer_id: customer.id }, redirectTo: `${new URL(request.url).origin}/auth/callback?next=/hub/redefinir-senha` });
+    }
     await supabase.from("audit_logs").insert({ project_id: project.id, action: "project_request_created", metadata: { source: "lesystems_express" } });
     return Response.json({ ok: true, projectId: `LE-${String(project.public_id).padStart(6, "0")}` }, { status: 201 });
   } catch (error) {

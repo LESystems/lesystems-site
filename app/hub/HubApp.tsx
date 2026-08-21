@@ -4,10 +4,11 @@ import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
 import ArrowIcon from "../components/ArrowIcon";
-import { signOut } from "./actions";
+import { approveProposal, createProposal, signOut } from "./actions";
 
 export type Role = "client" | "team";
 type View = "inicio" | "projetos" | "entregas" | "suporte" | "agenda";
+export type CommerceProject = { id:string; code:string; name:string; project_type:string; status:string; progress:number; created_at:string; proposal:null | { id:string; amountCents:number; status:string; description:string } };
 
 const clientNav: { id: View; label: string; icon: IconName }[] = [
   { id: "inicio", label: "Visão geral", icon: "home" },
@@ -32,7 +33,7 @@ const stages = [
   ["04", "Publicação", "próximo"],
 ];
 
-export default function HubApp({ initialRole, canSwitchRole, userName }: { initialRole: Role; canSwitchRole: boolean; userName: string }) {
+export default function HubApp({ initialRole, canSwitchRole, userName, projects }: { initialRole: Role; canSwitchRole: boolean; userName: string; projects: CommerceProject[] }) {
   const [role, setRole] = useState<Role>(initialRole);
   const [view, setView] = useState<View>("inicio");
   const [menuOpen, setMenuOpen] = useState(false);
@@ -55,7 +56,7 @@ export default function HubApp({ initialRole, canSwitchRole, userName }: { initi
 
     <section className="hub-main">
       <header className="hub-topbar"><button className="menu-toggle" aria-label={menuOpen ? "Fechar menu" : "Abrir menu"} aria-expanded={menuOpen} aria-controls="hub-navigation" onClick={() => setMenuOpen(!menuOpen)}><HubIcon name={menuOpen ? "close" : "menu"} /></button><div className="top-search"><span aria-hidden="true"><HubIcon name="search" /></span><input aria-label="Buscar" placeholder="Buscar projetos, arquivos ou chamados" /></div><div className="top-actions"><button aria-label="Notificações"><HubIcon name="bell" /><i /></button><div className="status-badge" role="status"><i /> Tudo funcionando</div></div></header>
-      {view === "inicio" ? (role === "client" ? <ClientHome onNavigate={setView} /> : <TeamHome onNavigate={setView} />) : <SectionView view={view} role={role} onBack={() => setView("inicio")} />}
+      {view === "inicio" ? (role === "client" ? <ClientHome onNavigate={setView} /> : <TeamHome onNavigate={setView} />) : <SectionView view={view} role={role} projects={projects} onBack={() => setView("inicio")} />}
     </section>
     {menuOpen && <button className="hub-overlay" aria-label="Fechar menu" onClick={() => setMenuOpen(false)} />}
   </main>;
@@ -85,11 +86,27 @@ function TeamHome({ onNavigate }: { onNavigate: (view: View) => void }) {
   </div>;
 }
 
-function SectionView({ view, role, onBack }: { view: View; role: Role; onBack: () => void }) {
+function SectionView({ view, role, projects, onBack }: { view: View; role: Role; projects: CommerceProject[]; onBack: () => void }) {
   const names = { projetos: role === "client" ? "Meu projeto" : "Carteira de projetos", entregas: role === "client" ? "Entregas e aprovações" : "Revisões internas", suporte: role === "client" ? "Central de suporte" : "Atendimento de clientes", agenda: role === "client" ? "Agenda" : "Agenda da equipe", inicio: "Visão geral" };
   const action = view === "projetos" ? { href: role === "team" ? "/hub/equipe/projetos/novo" : "/criar-projeto", label: role === "team" ? "Cadastrar projeto" : "Novo projeto" } : view === "suporte" ? { href: "/suporte", label: role === "team" ? "Central de atendimento" : "Abrir chamado" } : view === "agenda" ? { href: "/agendamento", label: "Agendar reunião" } : null;
-  return <div className="hub-content"><div className="welcome-row"><div><p className="hub-eyebrow">LESystems Hub</p><h1>{names[view]}</h1><p>Consulte e organize as informações desta área.</p></div>{action && <Link href={action.href} className="hub-primary">{action.label} <ArrowIcon diagonal={view !== "projetos"} /></Link>}</div><div className="empty-module hub-panel"><span><HubIcon name={view === "projetos" ? "project" : view === "entregas" ? "check" : view === "suporte" ? "support" : "calendar"} /></span><h2>Módulo preparado</h2><p>O fluxo principal já está mapeado. Na próxima versão, conectaremos dados reais, filtros e ações deste espaço.</p><button onClick={onBack}>Voltar à visão geral</button></div></div>;
+  return <div className="hub-content"><div className="welcome-row"><div><p className="hub-eyebrow">LESystems Hub</p><h1>{names[view]}</h1><p>Consulte e organize as informações desta área.</p></div>{action && <Link href={action.href} className="hub-primary">{action.label} <ArrowIcon diagonal={view !== "projetos"} /></Link>}</div>{view === "projetos" ? <CommerceProjects role={role} projects={projects} /> : <div className="empty-module hub-panel"><span><HubIcon name={view === "entregas" ? "check" : view === "suporte" ? "support" : "calendar"} /></span><h2>Módulo preparado</h2><p>O fluxo principal já está mapeado. Na próxima versão, conectaremos dados reais, filtros e ações deste espaço.</p><button onClick={onBack}>Voltar à visão geral</button></div>}</div>;
 }
+
+function CommerceProjects({ role, projects }: { role: Role; projects: CommerceProject[] }) {
+  if (!projects.length) return <div className="empty-module hub-panel"><span><HubIcon name="project" /></span><h2>Nenhum projeto ainda</h2><p>Assim que uma solicitação for registrada, ela aparecerá aqui.</p></div>;
+  return <div className="commerce-list">{projects.map(project => <article className="commerce-project hub-panel" key={project.id}><header><div><small>{project.code} · {project.project_type}</small><h2>{project.name}</h2></div><span>{statusLabel(project.status)}</span></header><div className="commerce-progress"><i style={{ width: `${project.progress}%` }} /></div>{project.proposal ? <div className="proposal-box"><div><small>Proposta comercial</small><strong>{money(project.proposal.amountCents)}</strong><p>{project.proposal.description}</p></div><ProposalAction role={role} project={project} /></div> : role === "team" ? <form className="proposal-form" action={createProposal}><input type="hidden" name="projectId" value={project.id}/><label>Valor da proposta (R$)<input name="amount" type="number" min="1" step="0.01" required placeholder="Ex.: 4500,00"/></label><label>Escopo e condições<textarea name="description" minLength={10} required rows={3} placeholder="Descreva o que será entregue, prazo e condições."/></label><button className="hub-primary">Enviar proposta ao cliente <ArrowIcon /></button></form> : <p className="proposal-waiting">A equipe está analisando o briefing e preparando sua proposta.</p>}</article>)}</div>;
+}
+
+function ProposalAction({ role, project }: { role:Role; project:CommerceProject }) {
+  const proposal = project.proposal!;
+  if (role === "team") return <span className="proposal-state">{proposal.status === "proposal" ? "Aguardando aceite" : proposal.status === "confirmed" ? "Pagamento confirmado" : "Aguardando pagamento"}</span>;
+  if (proposal.status === "proposal") return <form action={approveProposal}><input type="hidden" name="paymentId" value={proposal.id}/><button className="hub-primary">Aprovar proposta <ArrowIcon /></button></form>;
+  if (proposal.status === "pending") return <button className="hub-primary" onClick={async () => { const response = await fetch("/api/payments/checkout", { method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify({ paymentId:proposal.id }) }); const data = await response.json(); if (data.url) window.location.href = data.url; else window.alert(data.error || "Pagamento indisponível."); }}>Pagar com Pix ou cartão <ArrowIcon diagonal /></button>;
+  return <span className="proposal-state paid">Pagamento confirmado</span>;
+}
+
+function money(cents:number){return new Intl.NumberFormat("pt-BR",{style:"currency",currency:"BRL"}).format(cents/100)}
+function statusLabel(status:string){return ({new_request:"Nova solicitação",brief_received:"Briefing recebido",under_analysis:"Em análise",awaiting_approval:"Aguardando aprovação",awaiting_payment:"Aguardando pagamento",payment_confirmed:"Pagamento confirmado",in_development:"Em desenvolvimento",published:"Publicado",delivered:"Entregue"} as Record<string,string>)[status] || status.replaceAll("_"," ")}
 
 function Activity({ initials, title, text, time }: { initials:string; title:string; text:string; time:string }) { return <div className="activity"><span>{initials}</span><p><strong>{title}</strong><small>{text}</small><time>{time}</time></p></div>; }
 function Quick({ icon, title, text, action, onClick }: { icon:IconName; title:string; text:string; action:string; onClick: () => void }) { return <article className="quick-card"><span><HubIcon name={icon} /></span><div><h3>{title}</h3><p>{text}</p><button onClick={onClick}>{action} <ArrowIcon /></button></div></article>; }
