@@ -16,8 +16,7 @@ export async function updatePassword(_: PasswordState, formData: FormData): Prom
   const supabase = await createSupabaseServerClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return { error: "Este link expirou. Solicite um novo e-mail de acesso." };
-  const { error } = await supabase.auth.updateUser({ password });
+  const { error } = await supabase.auth.updateUser({ password, data: { ...user.user_metadata, must_change_password: false } });
   if (error) return { error: "Não foi possível salvar a senha. Solicite um novo link." };
   redirect("/hub");
 }
-
