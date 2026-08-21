@@ -3,6 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import SupabaseLoginForm from "./SupabaseLoginForm";
+import InviteSetup from "./InviteSetup";
 
 export default function HubLogin() {
   return <main className="hub-login">
@@ -12,11 +13,11 @@ export default function HubLogin() {
       <small className="login-foot">LESystems · Engenharia de software</small>
     </section>
     <section className="login-form-side" aria-labelledby="hub-login-title">
-      <div className="login-box"><p className="hub-eyebrow">Acesso seguro</p><h2 id="hub-login-title">Bem-vindo ao Hub.</h2><p>Entre com sua conta individual. Seu perfil e seus projetos serão identificados automaticamente.</p>
+      <div className="login-box"><InviteSetup /><div className="regular-login"><p className="hub-eyebrow">Acesso seguro</p><h2 id="hub-login-title">Bem-vindo ao Hub.</h2><p>Entre com sua conta individual. Seu perfil e seus projetos serão identificados automaticamente.</p>
         <SupabaseLoginForm />
         <div className="login-security"><span aria-hidden="true">✓</span><p><strong>Ambiente protegido</strong><small>Sua sessão expira automaticamente após 8 horas.</small></p></div>
         <Link className="back-site" href="/">← Voltar ao site da LESystems</Link>
-      </div>
+      </div></div>
     </section>
   </main>;
 }
