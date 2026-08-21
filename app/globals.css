@@ -209,6 +209,17 @@ html,body{max-width:100%;overflow-x:clip;overflow-y:visible}
 .map-core{isolation:isolate;width:104px;height:104px;border:1px solid rgba(120,224,237,.75);background:radial-gradient(circle at 35% 28%,rgba(61,218,235,.95),rgba(4,131,169,.96) 37%,#062d55 78%);box-shadow:0 18px 48px rgba(4,85,125,.3),inset 0 1px 1px rgba(255,255,255,.5)}.map-core::before{content:"";position:absolute;z-index:-1;inset:-11px;border:1px solid rgba(19,173,203,.28);border-radius:50%;background:conic-gradient(from 30deg,transparent 0 18%,rgba(19,183,207,.45) 20% 24%,transparent 26% 66%,rgba(218,187,122,.5) 68% 72%,transparent 74%);animation:spin 18s linear infinite}.map-core::after{content:"";position:absolute;width:7px;height:7px;right:-9px;top:18px;border-radius:50%;background:#66e2eb;box-shadow:0 0 0 4px rgba(102,226,235,.15),0 0 18px rgba(42,205,225,.8)}.map-core strong{font-size:27px;letter-spacing:.08em;text-shadow:0 2px 12px rgba(0,24,53,.24)}.map-core small{margin-top:-4px;font-size:7px;font-weight:800;letter-spacing:.09em;text-transform:uppercase;opacity:.82}.core-shine{position:absolute;left:23px;top:18px;width:24px;height:8px;border-radius:50%;background:rgba(255,255,255,.35);filter:blur(5px);transform:rotate(-22deg)}
 @media(max-width:680px){.map-core{width:92px;height:92px}.map-core::before{inset:-8px}.map-core strong{font-size:24px}.map-core small{font-size:6px}}
 @media(pointer:coarse){.action-arrow{width:20px;height:20px;flex-basis:20px}}
+
+/* Keep the ecosystem callouts in their own reserved space. */
+.solution-stage{padding-block:48px 44px}
+.solution-stage .pill-top{top:4px;right:16px}
+.solution-stage .pill-bottom{left:16px;bottom:2px}
+.solution-stage .solution-card{z-index:1}
+@media(max-width:680px){
+  .solution-stage{padding-top:54px;padding-bottom:52px}
+  .solution-stage .pill-top{top:5px;right:8px}
+  .solution-stage .pill-bottom{left:8px;bottom:4px}
+}
 @media(prefers-reduced-motion:reduce){.action-arrow{transition:none}.map-core::before{animation:none}}
 
 /* Commercial expansion */
