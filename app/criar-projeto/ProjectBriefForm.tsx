@@ -9,17 +9,19 @@ export default function ProjectBriefForm() {
   const [step, setStep] = useState(0);
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
+  const [previewUrl, setPreviewUrl] = useState("");
 
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     if (step < steps.length - 1) { setStep(step + 1); return; }
-    setLoading(true); setMessage("");
+    setLoading(true); setMessage(""); setPreviewUrl("");
     const form = event.currentTarget;
     const response = await fetch("/api/projects", { method: "POST", body: new FormData(form) });
     const data = await response.json();
     setLoading(false);
     if (!response.ok) { setMessage(data.error || "Não foi possível enviar sua solicitação."); return; }
-    setMessage(`Solicitação ${data.projectId} recebida. A LESystems entrará em contato após a análise.`);
+    setMessage(`Projeto ${data.projectId} criado. Seu primeiro protótipo automático já está disponível.`);
+    setPreviewUrl(data.previewUrl || "");
     form.reset(); setStep(0);
   }
 
@@ -30,7 +32,6 @@ export default function ProjectBriefForm() {
     <fieldset hidden={step !== 2}><legend>Identidade e referências</legend><div className="field-grid"><label>Cores preferidas<input name="colors" /></label><label>Estilo desejado<select name="style" defaultValue=""><option value="">Selecione</option><option>Moderno e tecnológico</option><option>Elegante e premium</option><option>Minimalista</option><option>Corporativo</option><option>Outro</option></select></label></div><label>Links de referência<textarea name="references" rows={4} placeholder="Um link por linha" /></label><label>Logo ou materiais<input name="files" type="file" multiple accept="image/*,.pdf,.doc,.docx" /></label><small>Os arquivos serão enviados para uma área privada após a confirmação da solicitação.</small></fieldset>
     <fieldset hidden={step !== 3}><legend>Como podemos falar com você?</legend><div className="field-grid"><label>Nome do responsável<input name="contactName" required={step === 3} autoComplete="name" /></label><label>E-mail<input name="email" type="email" required={step === 3} autoComplete="email" /></label></div><label>Telefone / WhatsApp<input name="phone" required={step === 3} autoComplete="tel" /></label><div className="express-rule"><strong>Você não paga para ver o projeto.</strong><p>Primeiro organizamos a solicitação, desenvolvemos e validamos o preview. O pagamento só acontece depois da sua aprovação.</p></div></fieldset>
     <div className="form-navigation">{step > 0 && <button type="button" className="button-secondary" onClick={() => setStep(step - 1)}>Voltar</button>}<button className="button" disabled={loading}>{step === steps.length - 1 ? (loading ? "Enviando…" : "Enviar solicitação") : "Continuar"}<ArrowIcon /></button></div>
-    <p className="express-message" role="status" aria-live="polite">{message}</p>
+    <p className="express-message" role="status" aria-live="polite">{message}{previewUrl && <> <a href={previewUrl} target="_blank" rel="noreferrer">Abrir protótipo</a></>}</p>
   </form>;
 }
-

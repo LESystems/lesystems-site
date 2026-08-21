@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { createHash, randomBytes } from "node:crypto";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 
 const briefSchema = z.object({
@@ -38,8 +39,18 @@ export async function POST(request: Request) {
     } else {
       await supabase.auth.admin.inviteUserByEmail(email, { data: { full_name: input.contactName, role: "client", customer_id: customer.id }, redirectTo: `${new URL(request.url).origin}/auth/callback?next=/hub/redefinir-senha` });
     }
-    await supabase.from("audit_logs").insert({ project_id: project.id, action: "project_request_created", metadata: { source: "lesystems_express" } });
-    return Response.json({ ok: true, projectId: `LE-${String(project.public_id).padStart(6, "0")}` }, { status: 201 });
+    const previewToken = randomBytes(24).toString("hex");
+    const previewHash = createHash("sha256").update(previewToken).digest("hex");
+    const features = input.features.split(/\r?\n|,/).map(item => item.trim()).filter(Boolean).slice(0, 8);
+    const snapshot = { type: input.projectType === "Sistema personalizado" ? "system-prototype" : "website-draft", company: input.companyName, segment: input.segment, description: input.companyDescription, audience: input.audience, objective: input.objective, features, colors: input.colors, style: input.style, contactName: input.contactName };
+    const { data: version } = await supabase.from("project_versions").insert({ project_id: project.id, version: "preview-automatico-01", snapshot }).select("id").single();
+    if (version) {
+      const previewUrl = `${new URL(request.url).origin}/preview/${previewToken}`;
+      await supabase.from("project_previews").insert({ project_id: project.id, version_id: version.id, url: previewUrl, access_token_hash: previewHash, expires_at: new Date(Date.now() + 30 * 86400000).toISOString(), released_at: new Date().toISOString() });
+      await supabase.from("projects").update({ status:"preview_released", progress:60 }).eq("id", project.id);
+    }
+    await supabase.from("audit_logs").insert({ project_id: project.id, action: "automatic_preview_created", metadata: { source: "lesystems_express", generator: snapshot.type } });
+    return Response.json({ ok: true, projectId: `LE-${String(project.public_id).padStart(6, "0")}`, previewUrl: `${new URL(request.url).origin}/preview/${previewToken}` }, { status: 201 });
   } catch (error) {
     console.error("Project intake failed", error instanceof Error ? error.message : "Unknown error");
     return Response.json({ error: "A plataforma ainda está sendo conectada. Fale com a LESystems para registrar sua solicitação." }, { status: 503 });
