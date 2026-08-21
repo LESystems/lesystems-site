@@ -18,11 +18,11 @@ const clientNav: { id: View; label: string; icon: IconName }[] = [
 ];
 
 const teamNav: { id: View; label: string; icon: IconName }[] = [
-  { id: "inicio", label: "Operação", icon: "home" },
-  { id: "projetos", label: "Projetos", icon: "project" },
-  { id: "entregas", label: "Aprovações", icon: "check" },
-  { id: "suporte", label: "Chamados", icon: "support" },
-  { id: "agenda", label: "Agenda", icon: "calendar" },
+  { id: "inicio", label: "Painel operacional", icon: "home" },
+  { id: "projetos", label: "Carteira de projetos", icon: "project" },
+  { id: "entregas", label: "Revisões internas", icon: "check" },
+  { id: "suporte", label: "Atendimento", icon: "support" },
+  { id: "agenda", label: "Agenda da equipe", icon: "calendar" },
 ];
 
 const stages = [
@@ -75,7 +75,7 @@ function ClientHome({ onNavigate }: { onNavigate: (view: View) => void }) {
 
 function TeamHome({ onNavigate }: { onNavigate: (view: View) => void }) {
   return <div className="hub-content">
-    <div className="welcome-row"><div><p className="hub-eyebrow">Operação LESystems</p><h1>Olá, Luis e Julia. <em>Três pontos precisam de atenção.</em></h1><p>Uma visão clara dos projetos, aprovações e atendimentos da equipe.</p></div><Link href="/criar-projeto" className="hub-primary">Novo projeto <HubIcon name="plus" /></Link></div>
+    <div className="welcome-row"><div><p className="hub-eyebrow">Operação LESystems</p><h1>Olá, Luis e Julia. <em>Três pontos precisam de atenção.</em></h1><p>Uma visão clara dos projetos, aprovações e atendimentos da equipe.</p></div><Link href="/hub/equipe/projetos/novo" className="hub-primary">Cadastrar projeto <HubIcon name="plus" /></Link></div>
     <div className="metric-grid"><Metric value="08" label="Projetos ativos" note="2 entregas nesta semana"/><Metric value="03" label="Aguardando cliente" note="Aprovações pendentes" alert/><Metric value="05" label="Chamados abertos" note="1 com prioridade alta"/><Metric value="94%" label="No prazo" note="Últimos 30 dias"/></div>
     <div className="hub-grid team-grid">
       <section className="hub-panel operations"><div className="panel-head"><div><span>Portfólio ativo</span><h2>Projetos em andamento</h2></div><button onClick={() => onNavigate("projetos")}>Ver todos</button></div><div className="project-table"><Project name="Aurora Clínica" type="Site institucional" progress="68" status="Desenvolvimento" initials="AC"/><Project name="Norte Logística" type="Sistema operacional" progress="42" status="Estratégia" initials="NL"/><Project name="Studio Alma" type="Automação comercial" progress="86" status="Validação" initials="SA"/></div></section>
@@ -86,8 +86,8 @@ function TeamHome({ onNavigate }: { onNavigate: (view: View) => void }) {
 }
 
 function SectionView({ view, role, onBack }: { view: View; role: Role; onBack: () => void }) {
-  const names = { projetos: role === "client" ? "Meu projeto" : "Projetos", entregas: role === "client" ? "Entregas e aprovações" : "Fila de aprovações", suporte: role === "client" ? "Central de suporte" : "Chamados de clientes", agenda: "Agenda", inicio: "Visão geral" };
-  const action = view === "projetos" ? { href: "/criar-projeto", label: "Novo projeto" } : view === "suporte" ? { href: "/suporte", label: "Abrir chamado" } : view === "agenda" ? { href: "/agendamento", label: "Agendar reunião" } : null;
+  const names = { projetos: role === "client" ? "Meu projeto" : "Carteira de projetos", entregas: role === "client" ? "Entregas e aprovações" : "Revisões internas", suporte: role === "client" ? "Central de suporte" : "Atendimento de clientes", agenda: role === "client" ? "Agenda" : "Agenda da equipe", inicio: "Visão geral" };
+  const action = view === "projetos" ? { href: role === "team" ? "/hub/equipe/projetos/novo" : "/criar-projeto", label: role === "team" ? "Cadastrar projeto" : "Novo projeto" } : view === "suporte" ? { href: "/suporte", label: role === "team" ? "Central de atendimento" : "Abrir chamado" } : view === "agenda" ? { href: "/agendamento", label: "Agendar reunião" } : null;
   return <div className="hub-content"><div className="welcome-row"><div><p className="hub-eyebrow">LESystems Hub</p><h1>{names[view]}</h1><p>Consulte e organize as informações desta área.</p></div>{action && <Link href={action.href} className="hub-primary">{action.label} <ArrowIcon diagonal={view !== "projetos"} /></Link>}</div><div className="empty-module hub-panel"><span><HubIcon name={view === "projetos" ? "project" : view === "entregas" ? "check" : view === "suporte" ? "support" : "calendar"} /></span><h2>Módulo preparado</h2><p>O fluxo principal já está mapeado. Na próxima versão, conectaremos dados reais, filtros e ações deste espaço.</p><button onClick={onBack}>Voltar à visão geral</button></div></div>;
 }
 
