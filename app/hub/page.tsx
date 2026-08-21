@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
-import { cookies } from "next/headers";
-import { validToken } from "../access";
+import { createSupabaseServerClient, isSupabaseConfigured } from "@/lib/supabase/server";
 import HubApp from "./HubApp";
 import HubLogin from "./HubLogin";
 import "./hub.css";
@@ -25,9 +24,11 @@ export const metadata: Metadata = {
 };
 
 export default async function HubPage() {
-  const jar = await cookies();
-  const teamAllowed = validToken("admin", jar.get("lesystems_admin")?.value);
-  const clientAllowed = validToken("client", jar.get("lesystems_client")?.value);
-  if (!teamAllowed && !clientAllowed) return <HubLogin />;
+  if (!isSupabaseConfigured()) return <HubLogin />;
+  const supabase = await createSupabaseServerClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return <HubLogin />;
+  const { data: profile } = await supabase.from("profiles").select("role").eq("id", user.id).maybeSingle();
+  const teamAllowed = profile?.role === "admin" || profile?.role === "team";
   return <HubApp initialRole={teamAllowed ? "team" : "client"} canSwitchRole={teamAllowed} />;
 }
