@@ -2,3 +2,4 @@
 @media(max-width:800px){.commerce-project>header,.proposal-box{align-items:stretch;flex-direction:column}.proposal-form{grid-template-columns:1fr}.proposal-box .hub-primary{width:100%;justify-content:center}}
 .pix-action{display:grid;justify-items:end;gap:8px;min-width:min(100%,360px)}.pix-action label{width:100%;color:#58707c;font-size:9px;font-weight:800}.pix-action textarea{width:100%;margin-top:6px;padding:10px;border:1px solid #cbdce2;border-radius:8px;background:#fff;color:#183746;font-size:9px;resize:none}.pix-action small{color:#68808c;font-size:8px}.pix-action .payment-error{max-width:300px;color:#b44747;text-align:right}
 .preview-link{display:inline-flex;align-items:center;gap:8px;margin:0 0 16px;color:#087f9f;font-size:10px;font-weight:900}
+.product-links{display:flex;flex-wrap:wrap;gap:18px}.preview-link.published{color:#218360}

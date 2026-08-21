@@ -59,3 +59,24 @@ export async function approveProposal(formData: FormData) {
   await admin.from("projects").update({ status: "awaiting_payment" }).eq("id", payment.project_id);
   revalidatePath("/hub");
 }
+
+export async function confirmPixAndPublish(formData: FormData) {
+  const paymentId = z.string().uuid().safeParse(formData.get("paymentId"));
+  if (!paymentId.success) return;
+  const session = await createSupabaseServerClient();
+  const { data:{ user } } = await session.auth.getUser();
+  if (!user) return;
+  const { data:profile } = await session.from("profiles").select("role").eq("id", user.id).single();
+  if (!profile || !["team", "admin"].includes(profile.role)) return;
+  const admin = createSupabaseAdminClient();
+  const { data:payment } = await admin.from("payments").select("id,project_id,status,provider,projects!inner(public_id,project_type)").eq("id", paymentId.data).single();
+  if (!payment || payment.status !== "pending" || payment.provider !== "inter_manual") return;
+  const project = payment.projects as unknown as { public_id:number; project_type:string };
+  const code = `LE-${String(project.public_id).padStart(6, "0")}`;
+  await admin.from("payments").update({ status:"confirmed", confirmed_at:new Date().toISOString() }).eq("id", payment.id);
+  const automaticallyPublishable = project.project_type !== "Sistema personalizado";
+  await admin.from("projects").update(automaticallyPublishable ? { status:"published", progress:100, final_url:`/sites/${code}` } : { status:"payment_confirmed", progress:70 }).eq("id", payment.project_id);
+  await admin.from("audit_logs").insert({ project_id:payment.project_id, actor_id:user.id, action:automaticallyPublishable ? "manual_pix_confirmed_and_product_published" : "manual_pix_confirmed", metadata:{ provider:"inter_manual", final_url:automaticallyPublishable ? `/sites/${code}` : null } });
+  revalidatePath("/hub");
+  revalidatePath(`/sites/${code}`);
+}
