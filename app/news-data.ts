@@ -1,4 +1,4 @@
-export type NewsItem = { title: string; link: string; source: string; date: string; category: string; summary: string; image: string };
+export type NewsItem = { title: string; link: string; source: string; date: string; category: string; summary: string; image: string; originalTitle?: string; originalSummary?: string };
 
 export const newsSources = [
   { name: "TechCrunch", url: "https://techcrunch.com/", feed: "https://techcrunch.com/feed/", category: "Negócios & inovação" },
@@ -92,12 +92,30 @@ export async function loadNews(limit = 12): Promise<NewsItem[]> {
   }
 
   const seen = new Set<string>();
-  return mixed.filter((item) => {
+  const unique = mixed.filter((item) => {
     const key = item.link.replace(/[?#].*$/, "") || item.title.toLowerCase();
     if (seen.has(key)) return false;
     seen.add(key);
     return true;
   });
+  return Promise.all(unique.map(translateNewsItem));
+}
+
+async function translateText(value: string) {
+  if (!value) return value;
+  try {
+    const endpoint = new URL("https://translate.googleapis.com/translate_a/single");
+    endpoint.search = new URLSearchParams({ client: "gtx", sl: "auto", tl: "pt", dt: "t", q: value }).toString();
+    const response = await fetch(endpoint, { next: { revalidate: 1800 }, signal: AbortSignal.timeout(4500) });
+    if (!response.ok) return value;
+    const data = await response.json() as [Array<[string]>];
+    return data[0]?.map(part => part[0]).join("").trim() || value;
+  } catch { return value; }
+}
+
+async function translateNewsItem(item: NewsItem): Promise<NewsItem> {
+  const [title, summary] = await Promise.all([translateText(item.title), translateText(item.summary)]);
+  return { ...item, title, summary, originalTitle: item.title, originalSummary: item.summary };
 }
 
 export function formatNewsDate(date: string) {
