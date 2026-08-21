@@ -44,14 +44,14 @@ export default function HubApp({ initialRole, canSwitchRole }: { initialRole: Ro
   return <main className={`hub-app hub-${role}`}>
     <aside className={`hub-sidebar ${menuOpen ? "is-open" : ""}`}>
       <div className="hub-brand"><span className="hub-logo-crop"><Image src="/icon.png" alt="" width={256} height={256} priority /></span><div><strong>LESystems</strong><small>Hub</small></div></div>
-      {canSwitchRole && <div className="role-switch" aria-label="Visualizar como"><button className={role === "client" ? "active" : ""} onClick={() => changeRole("client")}>Cliente</button><button className={role === "team" ? "active" : ""} onClick={() => changeRole("team")}>Equipe</button></div>}
-      <nav className="hub-nav" aria-label="Navegação do aplicativo">{nav.map(item => <button key={item.id} className={view === item.id ? "active" : ""} onClick={() => { setView(item.id); setMenuOpen(false); }}><span>{item.icon}</span>{item.label}</button>)}</nav>
+      {canSwitchRole && <div className="role-switch" aria-label="Visualizar como"><button aria-pressed={role === "client"} className={role === "client" ? "active" : ""} onClick={() => changeRole("client")}>Cliente</button><button aria-pressed={role === "team"} className={role === "team" ? "active" : ""} onClick={() => changeRole("team")}>Equipe</button></div>}
+      <nav id="hub-navigation" className="hub-nav" aria-label="Navegação do aplicativo">{nav.map(item => <button key={item.id} aria-current={view === item.id ? "page" : undefined} className={view === item.id ? "active" : ""} onClick={() => { setView(item.id); setMenuOpen(false); }}><span aria-hidden="true">{item.icon}</span>{item.label}</button>)}</nav>
       <div className="sidebar-help"><span>Precisa de ajuda?</span><p>Fale com o suporte LESystems.</p><button onClick={() => setView("suporte")}>Abrir chamado ↗</button></div>
       <div className="hub-user"><span>MS</span><div><strong>{role === "client" ? "Marina Souza" : "Lucas Esteves"}</strong><small>{role === "client" ? "Cliente · Aurora Clínica" : "Equipe · Administrador"}</small></div><button aria-label="Mais opções">•••</button></div>
     </aside>
 
     <section className="hub-main">
-      <header className="hub-topbar"><button className="menu-toggle" aria-label="Abrir menu" onClick={() => setMenuOpen(!menuOpen)}>☰</button><div className="top-search"><span>⌕</span><input aria-label="Buscar" placeholder="Buscar projetos, arquivos ou chamados" /></div><div className="top-actions"><button aria-label="Notificações">♢<i /></button><div className="status-badge"><i /> Tudo funcionando</div></div></header>
+      <header className="hub-topbar"><button className="menu-toggle" aria-label={menuOpen ? "Fechar menu" : "Abrir menu"} aria-expanded={menuOpen} aria-controls="hub-navigation" onClick={() => setMenuOpen(!menuOpen)}>☰</button><div className="top-search"><span aria-hidden="true">⌕</span><input aria-label="Buscar" placeholder="Buscar projetos, arquivos ou chamados" /></div><div className="top-actions"><button aria-label="Notificações">♢<i /></button><div className="status-badge" role="status"><i /> Tudo funcionando</div></div></header>
       {view === "inicio" ? (role === "client" ? <ClientHome /> : <TeamHome />) : <SectionView view={view} role={role} />}
     </section>
     {menuOpen && <button className="hub-overlay" aria-label="Fechar menu" onClick={() => setMenuOpen(false)} />}

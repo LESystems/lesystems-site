@@ -12,5 +12,5 @@ export const metadata: Metadata = {
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
-  return <html lang="pt-BR"><body><SiteAnalytics /><ScrollAtmosphere />{children}<AiAssistant /></body></html>;
+  return <html lang="pt-BR"><body><a className="skip-link" href="#main-content">Pular para o conteúdo principal</a><SiteAnalytics /><ScrollAtmosphere /><div id="main-content" tabIndex={-1}>{children}</div><AiAssistant /></body></html>;
 }
