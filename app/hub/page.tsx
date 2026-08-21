@@ -30,7 +30,7 @@ export default async function HubPage() {
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return <HubLogin />;
   if (user.user_metadata?.must_change_password === true) redirect("/hub/redefinir-senha");
-  const { data: profile } = await supabase.from("profiles").select("role").eq("id", user.id).maybeSingle();
+  const { data: profile } = await supabase.from("profiles").select("role, full_name").eq("id", user.id).maybeSingle();
   const teamAllowed = profile?.role === "admin" || profile?.role === "team";
-  return <HubApp initialRole={teamAllowed ? "team" : "client"} canSwitchRole={teamAllowed} />;
+  return <HubApp initialRole={teamAllowed ? "team" : "client"} canSwitchRole={teamAllowed} userName={profile?.full_name || user.email || "Usuário LESystems"} />;
 }
