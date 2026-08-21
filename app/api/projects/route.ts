@@ -27,7 +27,7 @@ export async function POST(request: Request) {
     if (customerError) throw customerError;
     const { data: project, error: projectError } = await supabase.from("projects").insert({ customer_id: customer.id, name: `${projectType} · ${input.companyName}`, project_type: projectType, description: input.objective }).select("id, public_id").single();
     if (projectError) throw projectError;
-    const { error: briefError } = await supabase.from("project_briefs").insert({ project_id: project.id, company: { name: input.companyName, segment: input.segment, description: input.companyDescription, audience: input.audience }, project: { type: input.projectType, objective: input.objective, features: input.features }, identity: { colors: input.colors, style: input.style, references: input.references }, contact: { name: input.contactName, email: input.email.toLowerCase(), phone: input.phone }, additional_notes: input.additionalNotes });
+    const { error: briefError } = await supabase.from("project_briefs").insert({ project_id: project.id, company: { name: input.companyName, segment: input.segment, description: input.companyDescription, audience: input.audience }, project: { type: projectType, objective: input.objective, features: input.features }, identity: { colors: input.colors, style: input.style, references: input.references }, contact: { name: input.contactName, email: input.email.toLowerCase(), phone: input.phone }, additional_notes: input.additionalNotes });
     if (briefError) throw briefError;
     const email = input.email.toLowerCase();
     const { data: users } = await supabase.auth.admin.listUsers({ page: 1, perPage: 1000 });
